@@ -1,6 +1,8 @@
 # ICH (Init Claude Headroom)
 
-Shell wrapper that bootstraps [Claude Code](https://docs.anthropic.com/en/docs/claude-code) through [Headroom](https://github.com/chopratejas/headroom) proxy with automatic venv activation and project root detection.
+> [Leia em Português](README.pt-br.md)
+
+Shell wrapper that bootstraps [Claude Code](https://docs.anthropic.com/en/docs/claude-code) through [Headroom](https://github.com/chopratejas/headroom) — a proxy that reduces Claude Code token consumption — with automatic venv activation and project root detection.
 
 ## What it does
 
