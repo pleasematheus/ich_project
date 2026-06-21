@@ -39,8 +39,17 @@ ich --bypass
 # Retomar última sessão
 ich --resume
 
+# Pular ativação do venv
+ich --no-venv
+
+# Visualizar comando sem executar
+ich --dry-run
+
 # Combinar flags
 ich -d ~/meu-projeto -b -r
+
+# Mostrar ajuda
+ich --help
 ```
 
 ## Flags
@@ -50,6 +59,9 @@ ich -d ~/meu-projeto -b -r
 | `--dir <caminho>` | `-d` | Diretório do projeto alvo |
 | `--bypass` | `-b` | Pula prompts de permissão do Claude Code |
 | `--resume` | `-r` | Retoma a última sessão do Claude Code |
+| `--no-venv` | `-n` | Pula ativação do venv |
+| `--dry-run` | | Mostra comando sem executar |
+| `--help` | `-h` | Mostra mensagem de ajuda |
 
 ## Detecção da raiz do projeto
 

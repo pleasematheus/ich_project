@@ -41,8 +41,17 @@ ich --bypass
 # Resume last session
 ich --resume
 
+# Skip venv activation
+ich --no-venv
+
+# Preview command without executing
+ich --dry-run
+
 # Combine flags
 ich -d ~/my-project -b -r
+
+# Show help
+ich --help
 ```
 
 ## Flags
@@ -52,6 +61,9 @@ ich -d ~/my-project -b -r
 | `--dir <path>` | `-d` | Target project directory |
 | `--bypass` | `-b` | Skip Claude Code permission prompts |
 | `--resume` | `-r` | Resume last Claude Code session |
+| `--no-venv` | `-n` | Skip venv activation |
+| `--dry-run` | | Show command without executing |
+| `--help` | `-h` | Show help message |
 
 ## Project root detection
 
