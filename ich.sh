@@ -64,13 +64,11 @@ while [[ "$#" -gt 0 ]]; do
     esac
 done
 
-# Checar dependências
-for cmd in claude headroom; do
-    if ! command -v "$cmd" &>/dev/null; then
-        echo "❌ Dependência não encontrada: $cmd"
-        exit 2
-    fi
-done
+# Checar dependência: claude (disponível antes do venv)
+if ! command -v claude &>/dev/null; then
+    echo "❌ Dependência não encontrada: claude"
+    exit 2
+fi
 
 # Navegar para o diretório do projeto
 eval cd "$TARGET_DIR" 2>/dev/null || { echo "❌ Diretório não encontrado: $TARGET_DIR"; exit 3; }
@@ -115,6 +113,13 @@ if [[ "$NO_VENV" == false ]]; then
     fi
 else
     echo "ℹ️ Ativação de venv pulada (--no-venv)."
+fi
+
+# Checar dependência: headroom (disponível após venv)
+if ! command -v headroom &>/dev/null; then
+    echo "❌ Dependência não encontrada: headroom"
+    echo "   Instale com: pip install \"headroom-ai[all]\""
+    exit 2
 fi
 
 # Montar comando
