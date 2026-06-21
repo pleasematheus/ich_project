@@ -1,14 +1,13 @@
 #!/bin/bash
 
 # ==========================================
-# ICH (Init Claude Headroom)
+# ICH (Init Claude Headroom) — uv edition
 # ==========================================
 
 TARGET_DIR="."
 DIR_EXPLICIT=false
 BYPASS=false
 RESUME=false
-NO_VENV=false
 DRY_RUN=false
 
 show_help() {
@@ -19,7 +18,6 @@ Options:
   -d, --dir <path>   Target project directory
   -b, --bypass       Skip Claude Code permission prompts
   -r, --resume       Resume last Claude Code session
-  -n, --no-venv      Skip venv activation
   --dry-run          Show command without executing
   -h, --help         Show this help message
 HELP
@@ -45,10 +43,6 @@ while [[ "$#" -gt 0 ]]; do
             RESUME=true
             shift
             ;;
-        -n|--no-venv)
-            NO_VENV=true
-            shift
-            ;;
         --dry-run)
             DRY_RUN=true
             shift
@@ -64,11 +58,13 @@ while [[ "$#" -gt 0 ]]; do
     esac
 done
 
-# Checar dependência: claude (disponível antes do venv)
-if ! command -v claude &>/dev/null; then
-    echo "❌ Dependência não encontrada: claude"
-    exit 2
-fi
+# Checar dependências
+for cmd in claude uv; do
+    if ! command -v "$cmd" &>/dev/null; then
+        echo "❌ Dependência não encontrada: $cmd"
+        exit 2
+    fi
+done
 
 # Navegar para o diretório do projeto
 eval cd "$TARGET_DIR" 2>/dev/null || { echo "❌ Diretório não encontrado: $TARGET_DIR"; exit 3; }
@@ -81,7 +77,7 @@ else
     PROJECT_ROOT="$TARGET_RESOLVED"
     FOUND_MARKER=false
     while true; do
-        if [[ -d ".venv" || -d "venv" || -d ".git" ]]; then
+        if [[ -f "pyproject.toml" || -d ".git" ]]; then
             PROJECT_ROOT="$(pwd)"
             FOUND_MARKER=true
             break
@@ -92,7 +88,7 @@ else
         cd ..
     done
     if [[ "$FOUND_MARKER" == false ]]; then
-        echo "⚠️ Nenhum marcador (.git/.venv) encontrado. Usando diretório atual: $TARGET_RESOLVED"
+        echo "⚠️ Nenhum marcador (.git/pyproject.toml) encontrado. Usando diretório atual: $TARGET_RESOLVED"
         PROJECT_ROOT="$TARGET_RESOLVED"
     fi
 fi
@@ -100,30 +96,8 @@ fi
 cd "$PROJECT_ROOT" || exit 3
 echo "📂 Raiz do projeto definida: $PROJECT_ROOT"
 
-# Ativação do venv
-if [[ "$NO_VENV" == false ]]; then
-    if [[ -d "$PROJECT_ROOT/.venv" ]]; then
-        source "$PROJECT_ROOT/.venv/bin/activate"
-        echo "✅ Venv local ativado: $PROJECT_ROOT/.venv"
-    elif [[ -d "$HOME/.venv" ]]; then
-        source "$HOME/.venv/bin/activate"
-        echo "✅ Venv do sistema ativado: $HOME/.venv"
-    else
-        echo "ℹ️ Nenhum venv encontrado, continuando sem venv."
-    fi
-else
-    echo "ℹ️ Ativação de venv pulada (--no-venv)."
-fi
-
-# Checar dependência: headroom (disponível após venv)
-if ! command -v headroom &>/dev/null; then
-    echo "❌ Dependência não encontrada: headroom"
-    echo "   Instale com: pip install \"headroom-ai[all]\""
-    exit 2
-fi
-
-# Montar comando
-CMD=(headroom wrap claude)
+# Montar comando — uv run gerencia o venv automaticamente
+CMD=(uv run headroom wrap claude)
 if [[ "$BYPASS" == true ]]; then
     CMD+=(--dangerously-skip-permissions)
 fi
@@ -137,5 +111,5 @@ if [[ "$DRY_RUN" == true ]]; then
     exit 0
 fi
 
-echo "🚀 Iniciando Headroom -> Claude..."
+echo "🚀 Iniciando Headroom -> Claude (via uv)..."
 "${CMD[@]}"
